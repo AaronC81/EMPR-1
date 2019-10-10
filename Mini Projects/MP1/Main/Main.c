@@ -2,36 +2,53 @@
 #include "lpc17xx_uart.h"		// Central include files
 #include "lpc17xx_pinsel.h"
 #include "lpc_types.h"
-#include "serial.h"			// Local functions
 #include "lpc17xx_systick.h"
 #include "lpc17xx_gpio.h"
+#include "serial.h"			// Local functions
 
 // LED numbers
-uint32_t LED_0 = 1 << 18;
-uint32_t LED_1 = 1 << 20;
-uint32_t LED_2 = 1 << 21;
-uint32_t LED_3 = 1 << 23;
+const uint32_t LED_0 = 1 << 18;
+const uint32_t LED_1 = 1 << 20;
+const uint32_t LED_2 = 1 << 21;
+const uint32_t LED_3 = 1 << 23;
+
+void int_to_4bit_bin(char* bin, uint32_t num)
+{
+	bin[4] = num & (1) ? '1' : '0';
+	bin[3] = num & (1 << 1) ? '1' : '0';
+	bin[2] = num & (1 << 2) ? '1' : '0';
+	bin[1] = num & (1 << 3) ? '1' : '0';
+}
 
 void SysTick_Handler(void)
 {
-	write_usb_serial_blocking("debug 1\n\r",9);
 	static uint32_t count = -1;
 	static uint32_t timer = 0;
-	static char buffer[5];
-	write_usb_serial_blocking("debug 2\n\r",9);
-	if (timer++ >= 10)
+	static char dec[5];
+	static char hexa[2];
+	static char bin[5];
+
+	if (timer++ >= 10 && count++ <= 14)
 	{
 		GPIO_ClearValue(1, LED_0);
 		GPIO_ClearValue(1, LED_1);
 		GPIO_ClearValue(1, LED_2);
 		GPIO_ClearValue(1, LED_3);
-		count++;
-		sprintf(buffer, "%02d\n\r", count);
-		write_usb_serial_blocking(buffer, 4);
+
+		sprintf(dec, "%02d |", count);
+		sprintf(hexa, " %x |", count);
+		char bin[8] = " xxxx\n\r";
+		int_to_4bit_bin(bin, count);
+
+		write_usb_serial_blocking(dec, 4);
+                write_usb_serial_blocking(hexa, 4);
+                write_usb_serial_blocking(bin, 8);
+
 		if (count & 1) GPIO_SetValue(1, LED_0);
 		if (count & 2) GPIO_SetValue(1, LED_1);
 		if (count & 4) GPIO_SetValue(1, LED_2);
 		if (count & 8) GPIO_SetValue(1, LED_3);
+
 		timer = 0;
 	}
 }
