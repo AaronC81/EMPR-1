@@ -17,7 +17,7 @@ void SysTick_Handler(void)
 
   msTicks++;
 
-  if((msTicks % 10) == 0)
+  if((msTicks % 10) == 0 && count < 16)
   {
     if(count == 0)
       write_usb_serial_blocking("Starting count\n\r",16);
@@ -43,9 +43,9 @@ void SysTick_Handler(void)
     write_usb_serial_blocking(bin , 4);
     write_usb_serial_blocking("\n\r" , 2);
 
-    count = (count + 1) & 0xF ;
+    count++;
 
-    if(count == 0)
+    if(count == 16)
       write_usb_serial_blocking("Finished count\n\r\n\r",18);
   }
 }
