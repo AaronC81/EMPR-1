@@ -58,7 +58,7 @@ void main(void)
   serial_init();
   write_usb_serial_blocking("Serial initialised\n\r\n\r",22);
 
-  setup_leds();
+  init_leds();
 
   returnCode = SysTick_Config(SystemCoreClock / 10);
 

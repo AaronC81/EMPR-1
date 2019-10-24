@@ -8,8 +8,8 @@
 #define LED_2 (1 << 21)
 #define LED_3 (1 << 23)
 
-void setup_leds(void);
+void init_leds(void);
 
 void enable_led(uint32_t led , uint8_t enable);
 
-void clear_all_leds(void);
+void enable_all_leds(uint8_t enable);
