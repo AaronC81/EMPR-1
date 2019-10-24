@@ -7,14 +7,6 @@
 
 volatile uint32_t msTicks = 0;
 
-void int_to_4bit_bin(char* bin, uint32_t num)
-{
-  bin[3] = num & (1) ? '1' : '0';
-  bin[2] = num & (1 << 1) ? '1' : '0';
-  bin[1] = num & (1 << 2) ? '1' : '0';
-  bin[0] = num & (1 << 3) ? '1' : '0';
-}
-
 void SysTick_Handler(void)
 {
   int returncode;
@@ -30,25 +22,27 @@ void SysTick_Handler(void)
     if(count == 0)
       write_usb_serial_blocking("Starting count\n\r",16);
 
-    clear_all_leds();
+    bin[4] = "xxxx";
 
-    if(count & 1)
-      enable_led(LED_0 , 1);
-    if(count & 2)
-      enable_led(LED_1 , 1);
-    if(count & 4)
-      enable_led(LED_2 , 1);
-    if(count & 8)
-      enable_led(LED_3 , 1);
+    enable_led(LED_0 , count & 1);
+    bin[3] = (count & 1) ? '1' : '0' ;
+
+    enable_led(LED_1 , count & 2);
+    bin[2] = (count & 2) ? '1' : '0' ;
+
+    enable_led(LED_2 , count & 4);
+    bin[1] = (count & 4) ? '1' : '0';
+
+    enable_led(LED_3 , count & 8);
+    bin[0] = (count & 8) ? '1' : '0';
 
     returncode = sprintf(dec , "%02d " , count);
     write_usb_serial_blocking(dec , returncode);
     returncode = sprintf(hex , "%02X " , count);
     write_usb_serial_blocking(hex , returncode);
-    bin[4] = "xxxx";
-    int_to_4bit_bin(bin , count);
     write_usb_serial_blocking(bin , 4);
     write_usb_serial_blocking("\n\r" , 2);
+
     count = (count + 1) & 0xF ;
 
     if(count == 0)
