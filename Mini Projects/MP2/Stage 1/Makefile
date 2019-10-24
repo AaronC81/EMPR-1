@@ -1,5 +1,9 @@
 #!/usr/bin/make -f
 
+# This is the name of the object file and the resulting executable
+# This has been placed here for you to change
+BLOB = main
+
 # Ensure consistent environment
 SHELL := /bin/bash
 PATH := /opt/york/cs/net/bin:$(PATH)
@@ -46,10 +50,10 @@ LDFLAGS=$(CMSISFL) -static -mcpu=cortex-m3 -mthumb -mthumb-interwork \
 LDFLAGS+=-L$(CMSIS)/lib -lDriversLPC17xxgnu
 
 # Name of the binary being built
-EXECNAME	= bin/serial
+EXECNAME	= bin/$(BLOB)
 
 # Source files provided by the user to build the project
-OBJ		= serial.o 
+OBJ		= $(BLOB).o serial.o
 
 # Commands handled by this makefile
 all: 	serial
