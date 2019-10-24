@@ -21,13 +21,15 @@ void pins_i2c(void)
 // Entry point for the program
 void main(void)
 {
-  uint32_t count;
-  char result_string[8];
+  uint32_t count , address;
+  int returncode;
+  char result_string[31];
+  char device_string[22];
   uint8_t send[1] = {0};
   uint8_t receive[1] = {0};
   Status result;
+
   serial_init();
-  write_usb_serial_blocking("init\n\r", 6);
   pins_i2c();
   I2C_Init(LPC_I2C1, 100000);
   I2C_Cmd(LPC_I2C1, ENABLE);
@@ -44,16 +46,22 @@ void main(void)
     .status = 0
   };
 
-  for (count = 0; count < 128; count++)
+  returncode = 0;
+  count = 0;
+  for(address = 0 ; address < 128 ; address++)
   {
-    setup.sl_addr7bit = count;
+    setup.sl_addr7bit = address;
     result = I2C_MasterTransferData(LPC_I2C1, &setup, I2C_TRANSFER_POLLING);
     if (result)
     {
-      sprintf(result_string, "%d, %x\n\r", result, count);
-      write_usb_serial_blocking(result_string, 7);
+      returncode = sprintf(result_string , "Device found at address 0x%02x\n\r" , address);
+      write_usb_serial_blocking(result_string, 30);
+      count++;
     }
   }
-  write_usb_serial_blocking("end\n\r", 5);
+
+  returncode = sprintf(device_string , "%02X devices present.\n\r" , count);
+  write_usb_serial_blocking(device_string , returncode);
+
   while(1);
 }
