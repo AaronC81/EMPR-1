@@ -23,7 +23,7 @@ void main(void)
 {
   uint32_t count , address;
   int returncode;
-  char result_string[31];
+  char result_string[35];
   char device_string[22];
   uint8_t send[1] = {0};
   uint8_t receive[1] = {0};
@@ -60,7 +60,7 @@ void main(void)
     }
   }
 
-  returncode = sprintf(device_string , "%02X devices present.\n\r" , count);
+  returncode = sprintf(device_string , "%02X devices connected to i2c bus.\n\r" , count);
   write_usb_serial_blocking(device_string , returncode);
 
   while(1);
