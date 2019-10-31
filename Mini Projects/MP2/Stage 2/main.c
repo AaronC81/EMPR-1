@@ -4,7 +4,8 @@
 #include "lpc17xx_i2c.h"
 #include "lpc_types.h"
 #include "stdio.h"
-#include "serial.h"			// Local functions
+#include "string.h"
+#include "serial.h"
 
 uint8_t send[2] = {0,0};
 uint8_t receive[1] = {0};
@@ -102,6 +103,25 @@ void write_i2c(void)
     write_usb_serial_blocking("ERROR\n\r" , 7);
 }
 
+uint8_t ascii_to_r( char letter )
+{
+  if( (letter > 0x40 && letter < 0x5B) || (letter > 0x60 && letter < 0x7B) )
+    return (uint8_t)(letter + 0x80);
+  else
+    return 0xA0;
+}
+
+void print_string( char* string , uint8_t row )
+{
+  int position , offset;
+  size_t length = strlen(string);
+  offset = row ? 0x40 : 0x00;
+  for(position = 0 ; position < length ; position++)
+  {
+    write_lcd_pos(ascii_to_r(string[position]) , position + offset);
+  }
+}
+
 // Entry point for the program
 void main(void)
 {
@@ -123,18 +143,8 @@ void main(void)
   write_usb_serial_blocking(result_string , 10);
 
   // write characters to all positions
-  for(position = 0x00 ; position < 0x10 ; position++)
-  {
-    write_lcd_pos(0x7F , position);
-    sprintf(result_string, "%02X %02X %02X\n\r", setup.sl_addr7bit , *setup.tx_data , *(setup.tx_data+1));
-    write_usb_serial_blocking(result_string , 10);
-  }
-  for(position = 0x40 ; position < 0x50 ; position++)
-  {
-    write_lcd_pos(0x7F , position);
-    sprintf(result_string, "%02X %02X %02X\n\r", setup.sl_addr7bit , *setup.tx_data , *(setup.tx_data+1));
-    write_usb_serial_blocking(result_string , 10);
-  }
+  print_string("Hello" , 0);
+  print_string("World" , 1);
 
   write_usb_serial_blocking("End\n\r" , 5);
 
