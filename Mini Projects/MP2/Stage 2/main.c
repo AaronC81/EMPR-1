@@ -8,7 +8,7 @@
 #include "serial.h"
 
 uint8_t send[2] = {0,0};
-uint8_t receive[1] = {0};
+uint8_t receive[0] = {};
 I2C_M_SETUP_Type setup =
 {
   .tx_data = &send,
