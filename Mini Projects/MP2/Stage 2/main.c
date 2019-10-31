@@ -75,28 +75,12 @@ void clear_lcd(void)
    *
    * blank patterns = 0xA0, 0x91, 0x9B
    */
-  uint32_t tick;
-  //uint32_t position;
-  send[0] = 0x00;
-  /*
-  // Switch off display
-  send[1] = 0x08;
-  write_i2c();
-
+  uint32_t position;
   // Write blank pattern into all DDRAM addresses
-  for(position = 0 ; position < 40 ; position++)
+  for(position = 0 ; position < 0x10 ; position++)
     write_lcd_pos(0xA0 , position);
-
-  // Switch on display
-  send[1] = 0x0C;
-  write_i2c();
-  */
-  // Clear the display
-  send[1] = 0x01;
-  write_i2c();
-  tick = 0;
-  while(tick++ < 1024)
-    ;
+  for(position = 0x40 ; position < 0x50 ; position++)
+    write_lcd_pos(0xA0 , position);
 }
 
 void write_lcd_pos(uint8_t character , uint8_t position)
@@ -139,7 +123,13 @@ void main(void)
   write_usb_serial_blocking(result_string , 10);
 
   // write characters to all positions
-  for(position = 0 ; position < 16 ; position++)
+  for(position = 0x00 ; position < 0x10 ; position++)
+  {
+    write_lcd_pos(0x7F , position);
+    sprintf(result_string, "%02X %02X %02X\n\r", setup.sl_addr7bit , *setup.tx_data , *(setup.tx_data+1));
+    write_usb_serial_blocking(result_string , 10);
+  }
+  for(position = 0x40 ; position < 0x50 ; position++)
   {
     write_lcd_pos(0x7F , position);
     sprintf(result_string, "%02X %02X %02X\n\r", setup.sl_addr7bit , *setup.tx_data , *(setup.tx_data+1));
