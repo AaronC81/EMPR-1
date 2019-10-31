@@ -56,6 +56,7 @@ void main(void)
   uint32_t returnCode;
 
   serial_init();
+  write_usb_serial_blocking("\033[2J",6);
   write_usb_serial_blocking("Serial initialised\n\r\n\r",22);
 
   init_leds();
