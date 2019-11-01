@@ -52,18 +52,21 @@ void clear_lcd(void)
    *
    * blank patterns = 0xA0, 0x91, 0x9B
    */
-  uint32_t position;
+  uint32_t column;
   // Write blank pattern into all DDRAM addresses
-  for(position = 0 ; position < 0x10 ; position++)
-    write_lcd_pos(0xA0 , position);
-  for(position = 0x40 ; position < 0x50 ; position++)
-    write_lcd_pos(0xA0 , position);
+  for(column = 0 ; column < 0x10 ; column++)
+    write_lcd_pos(0xA0 , ROW_1 , column);
+  for(column = 0 ; column < 0x10 ; column++)
+    write_lcd_pos(0xA0 , ROW_2 , column);
 }
 
-void write_lcd_pos(uint8_t character , uint8_t position)
+void write_lcd_pos(uint8_t character , uint8_t row , uint8_t column)
 {
+  uint8_t offset;
+  offset = row ? 0x40 : 0x00;
+
   l_send[0] = 0x00;
-  l_send[1] = 0x80 + position;
+  l_send[1] = 0x80 + column + offset;
   write_i2c(&l_setup);
 
   l_send[0] = 0x40;
@@ -81,11 +84,10 @@ uint8_t ascii_to_r( char letter )
 
 void print_string( char* string , uint8_t row )
 {
-  int position , offset;
+  int column;
   size_t length = strlen(string);
-  offset = row ? 0x40 : 0x00;
-  for(position = 0 ; position < length ; position++)
-  {
-    write_lcd_pos(ascii_to_r(string[position]) , position + offset);
-  }
+  for(column = 0 ; column < length ; column++)
+    write_lcd_pos(ascii_to_r(string[column]) , row , column);
+  for( ; column < 0x10 ; column++)
+    write_lcd_pos(0xA0 , row , column);
 }

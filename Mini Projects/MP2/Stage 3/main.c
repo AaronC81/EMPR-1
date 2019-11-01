@@ -30,7 +30,7 @@ void main(void)
 			{
 				sprintf(output , "%02X %02X\n\r" , i , value);
 				write_usb_serial_blocking(output , 7);
-				write_lcd_pos(value , 0);
+				write_lcd_pos(value , ROW_1 , 0);
 				break;
 			}
 		}
