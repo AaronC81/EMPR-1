@@ -9,6 +9,8 @@
 #include "i2c.h"
 #include "lcd.h"
 
+uint8_t lcd_initialised = 0;
+
 uint8_t l_send[2] = {0,0};
 uint8_t l_receive[0] = {};
 I2C_M_SETUP_Type l_setup =
@@ -29,11 +31,15 @@ void init_lcd(void)
 {
   uint32_t index;
   const uint32_t init_bytes[10] = {0x34 , 0x0c , 0x06 , 0x35 , 0x04 , 0x10 , 0x42 , 0x9f , 0x34 , 0x02};
-  l_send[0] = 0x00;
-  for(index = 0 ; index < 10 ; index++)
+  if(!lcd_initialised)
   {
-    l_send[1] = init_bytes[index];
-    write_i2c(&l_setup);
+    l_send[0] = 0x00;
+    for(index = 0 ; index < 10 ; index++)
+    {
+      l_send[1] = init_bytes[index];
+      write_i2c(&l_setup);
+    }
+    lcd_initialised = 1;
   }
 }
 
@@ -63,6 +69,10 @@ void clear_lcd(void)
 void write_lcd_pos(uint8_t character , uint8_t row , uint8_t column)
 {
   uint8_t offset;
+
+  if(!lcd_initialised)
+    init_lcd();
+
   offset = row ? 0x40 : 0x00;
 
   l_send[0] = 0x00;
