@@ -31,6 +31,11 @@ void debug_to_serial(const char* format , ...)
   free(test_string);
 }
 
+void clear_serial(void)
+{
+  write_usb_serial_blocking("\033[2J",6);
+}
+
 // Read options
 int read_usb_serial_none_blocking(char *buf,int length)
 {
