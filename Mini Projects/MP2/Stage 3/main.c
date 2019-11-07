@@ -19,8 +19,6 @@ void main(void)
 	clear_lcd();
 	print_string("test", ROW_1);
 
-	debug_to_serial("Test %d\n\r" , 42);
-
 	int i;
 	uint8_t value;
 	while(1)
