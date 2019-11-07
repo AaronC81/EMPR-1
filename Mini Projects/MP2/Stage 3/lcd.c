@@ -14,10 +14,10 @@ uint8_t l_receive[0] = {};
 I2C_M_SETUP_Type l_setup =
 {
   .sl_addr7bit = 0x3b,
-  .tx_data = &l_send,
+  .tx_data = l_send,
   .tx_length = 2,
   .tx_count = 0,
-  .rx_data = &l_receive,
+  .rx_data = l_receive,
   .rx_length = 0,
   .rx_count = 0,
   .retransmissions_max = 3,
