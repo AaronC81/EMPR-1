@@ -29,15 +29,17 @@ I2C_M_SETUP_Type l_setup =
 
 void init_lcd(void)
 {
+  Status result;
   uint32_t index;
   const uint32_t init_bytes[10] = {0x34 , 0x0c , 0x06 , 0x35 , 0x04 , 0x10 , 0x42 , 0x9f , 0x34 , 0x02};
+
   if(!lcd_initialised)
   {
     l_send[0] = 0x00;
     for(index = 0 ; index < 10 ; index++)
     {
       l_send[1] = init_bytes[index];
-      write_i2c(&l_setup);
+      result = write_i2c(&l_setup);
     }
     lcd_initialised = 1;
   }

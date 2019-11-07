@@ -33,13 +33,13 @@ void init_i2c(void)
   }
 }
 
-void write_i2c(I2C_M_SETUP_Type* setup)
+Status write_i2c(I2C_M_SETUP_Type* setup)
 {
   Status result;
   if(!i2c_initialised)
     init_i2c();
 
   result = I2C_MasterTransferData(LPC_I2C1, setup, I2C_TRANSFER_POLLING);
-  if(!result)
-    debug_to_serial("I2C ERROR!\n\r");
+
+  return result;
 }

@@ -19,6 +19,8 @@ void main(void)
 
 	clear_lcd();
 
+	stage1();
+
 	stage3();
 
 	// shouldn't reach here !
@@ -26,7 +28,41 @@ void main(void)
 	while(1);
 }
 
-void stage1(void){}
+void stage1(void)
+{
+  uint32_t count , address;
+  uint8_t send[1] = {0};
+  uint8_t receive[0] = {};
+  Status result;
+
+  I2C_M_SETUP_Type setup =
+  {
+    .tx_data = send,
+    .tx_length = 1,
+    .tx_count = 0,
+    .rx_data = receive,
+    .rx_length = 0,
+    .rx_count = 0,
+    .retransmissions_max = 3,
+    .retransmissions_count = 0,
+    .status = 0
+  };
+
+  count = 0;
+  for(address = 0 ; address < 128 ; address++)
+  {
+    setup.sl_addr7bit = address;
+    result = write_i2c(&setup);
+    if (result)
+    {
+      debug_to_serial("Device found at address 0x%02x\n\r" , address);
+      count++;
+    }
+  }
+
+  debug_to_serial("%02X devices connected to i2c bus.\n\r" , count);
+}
+
 void stage2(void){}
 
 void stage3(void)
