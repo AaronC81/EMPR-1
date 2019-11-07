@@ -19,9 +19,10 @@ void main(void)
 	init_keypad();
 
 	clear_lcd();
-	print_string("test", ROW_1);
 
-	uint8_t value , last;
+	uint8_t value , last , pos , row;
+	pos = 0;
+	row = ROW_1;
 	while(1)
 	{
 	  if((value = check_keypad()) != 0x00)
@@ -29,7 +30,10 @@ void main(void)
 	    if(last != value)
 	    {
 	      debug_to_serial("%02X\n\r" , value);
-	      write_lcd_pos(value , ROW_1 , 0);
+	      write_lcd_pos(value , row , pos);
+	      pos = (pos + 1) & 0x0F;
+	      if(!pos)
+		row = row == ROW_1 ? ROW_2 : ROW_1;
 	    }
 	  }
 	  last = value;
