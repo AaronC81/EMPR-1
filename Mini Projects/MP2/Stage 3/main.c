@@ -39,6 +39,6 @@ void main(void)
 	  last = value;
 	}
 	// shouldn't reach here !
-	write_usb_serial_blocking("exit\n\r" , 6);
+	debug_to_serial("exit\n\r");
 	while(1);
 }

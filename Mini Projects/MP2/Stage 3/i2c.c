@@ -32,5 +32,5 @@ void write_i2c(I2C_M_SETUP_Type* setup)
   Status result;
   result = I2C_MasterTransferData(LPC_I2C1, setup, I2C_TRANSFER_POLLING);
   if(!result)
-    write_usb_serial_blocking("ERROR\n\r" , 7);
+    debug_to_serial("I2C ERROR!\n\r");
 }
