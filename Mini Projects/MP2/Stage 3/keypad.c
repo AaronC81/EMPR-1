@@ -56,3 +56,18 @@ uint8_t check_column(uint8_t column)
 		result = lookup(column);
 	return result;
 }
+
+uint8_t check_keypad(void)
+{
+  uint8_t i , result , tmp;
+  result = 0;
+  for(i = 1 ; i < 5 ; i++)
+  {
+    if((tmp = check_column(i)) != 0)
+    {
+      result = tmp;
+      break;
+    }
+  }
+  return result;
+}

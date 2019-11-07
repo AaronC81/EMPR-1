@@ -34,3 +34,5 @@ static const uint8_t LUT[4][4] =
 		0xC1 , // A
 	}
 };
+
+uint8_t check_keypad(void);
