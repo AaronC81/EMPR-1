@@ -39,6 +39,8 @@ void init_lcd(void)
     {
       l_send[1] = lcd_init_bytes[index];
       result = write_i2c(&l_setup);
+      if(!result)
+	debug_to_serial("Error initialising LCD\n\r");
     }
     lcd_initialised = 1;
   }
@@ -69,6 +71,7 @@ void clear_lcd(void)
 
 void write_lcd_pos(uint8_t character , uint8_t row , uint8_t column)
 {
+  Status result;
   uint8_t offset;
 
   if(!lcd_initialised)
@@ -78,11 +81,15 @@ void write_lcd_pos(uint8_t character , uint8_t row , uint8_t column)
 
   l_send[0] = 0x00;
   l_send[1] = 0x80 + column + offset;
-  write_i2c(&l_setup);
+  result = write_i2c(&l_setup);
+  if(!result)
+    debug_to_serial("Error setting LCD position.\n\r");
 
   l_send[0] = 0x40;
   l_send[1] = character;
-  write_i2c(&l_setup);
+  result = write_i2c(&l_setup);
+  if(!result)
+    debug_to_serial("Error writing character to LCD.\n\r");
 }
 
 uint8_t ascii_to_r( char letter )

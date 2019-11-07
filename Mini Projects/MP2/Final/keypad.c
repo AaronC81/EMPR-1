@@ -33,6 +33,9 @@ void init_keypad(void)
   {
     k_send = 0x0F;
     result = write_i2c(&k_setup);
+    if(!result)
+      debug_to_serial("Error initialising keypad.\n\r");
+
     keypad_initialised = 1;
   }
 }
@@ -63,13 +66,20 @@ uint8_t check_column(uint8_t column)
   k_setup.tx_length = 1;
   k_send = ~(1 << (column + 3));
   result = write_i2c(&k_setup);
+  if(!result)
+    debug_to_serial("Error writing to keypad.\n\r");
+
   k_setup.rx_length = 1;
   k_setup.tx_length = 0;
   result = write_i2c(&k_setup);
+  if(!result)
+    debug_to_serial("Error reading from keypad.\n\r");
+
   lut_result = 0;
   tmp = ~k_receive & 0x0F;
   if(tmp != 0)
     lut_result = lookup(column);
+
   return lut_result;
 }
 
