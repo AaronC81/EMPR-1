@@ -14,7 +14,6 @@ void main(void)
 	serial_init();
 	clear_serial();
 
-	init_i2c();
 	init_lcd();
 	init_keypad();
 
