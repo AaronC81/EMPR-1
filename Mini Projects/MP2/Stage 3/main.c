@@ -21,14 +21,18 @@ void main(void)
 	clear_lcd();
 	print_string("test", ROW_1);
 
-	uint8_t value;
+	uint8_t value , last;
 	while(1)
 	{
 	  if((value = check_keypad()) != 0x00)
 	  {
-	    debug_to_serial("%02X\n\r" , value);
-	    write_lcd_pos(value , ROW_1 , 0);
+	    if(last != value)
+	    {
+	      debug_to_serial("%02X\n\r" , value);
+	      write_lcd_pos(value , ROW_1 , 0);
+	    }
 	  }
+	  last = value;
 	}
 	// shouldn't reach here !
 	write_usb_serial_blocking("exit\n\r" , 6);
