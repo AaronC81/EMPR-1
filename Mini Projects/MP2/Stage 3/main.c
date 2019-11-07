@@ -17,24 +17,25 @@ void main(void)
 	init_keypad();
 
 	clear_lcd();
-	print_string("test", 0);
+	print_string("test", ROW_1);
+
+	debug_to_serial("Test %d\n\r" , 42);
 
 	int i;
 	uint8_t value;
-	char output[8] = "xxxxxxx";
 	while(1)
 	{
-		for(i = 1 ; i < 5 ; i++)
-		{
-			if((value = check_column(i)) != 0x00)
-			{
-				sprintf(output , "%02X %02X\n\r" , i , value);
-				write_usb_serial_blocking(output , 7);
-				write_lcd_pos(value , ROW_1 , 0);
-				break;
-			}
-		}
+	  for(i = 1 ; i < 5 ; i++)
+	  {
+	    if((value = check_column(i)) != 0x00)
+	    {
+	      debug_to_serial("%02X %02X\n\r" , i , value);
+	      write_lcd_pos(value , ROW_1 , 0);
+	      break;
+	    }
+	  }
 	}
+	// shouldn't reach here !
 	write_usb_serial_blocking("exit\n\r" , 6);
 	while(1);
 }

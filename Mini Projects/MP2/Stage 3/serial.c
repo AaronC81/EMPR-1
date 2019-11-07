@@ -4,6 +4,33 @@
 #include "lpc_types.h"
 #include "serial.h"			// Local functions
 
+#define _GNU_SOURCE
+#include "stdio.h"
+#include "stdarg.h"
+#include "string.h"
+
+void debug_to_serial(const char* format , ...)
+{
+  va_list args;
+  char* test_string; // unallocated
+  int len , result;
+
+  va_start(args , format);
+  result = vasprintf(&test_string , format , args);
+  va_end(args);
+
+  if(result < 0)
+    write_usb_serial_blocking("VASPRINTF ERROR!\n\r" , 18);
+
+  len = strlen(test_string);
+  if(len <= 0)
+    write_usb_serial_blocking("STRLEN ERROR!\n\r" , 15);
+
+  result = write_usb_serial_blocking(test_string , len);
+
+  free(test_string);
+}
+
 // Read options
 int read_usb_serial_none_blocking(char *buf,int length)
 {
