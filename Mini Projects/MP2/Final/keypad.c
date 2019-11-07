@@ -9,6 +9,8 @@
 #include "i2c.h"
 #include "keypad.h"
 
+uint8_t keypad_initialised = 0;
+
 uint8_t k_send;
 uint8_t k_receive;
 I2C_M_SETUP_Type k_setup =
@@ -25,8 +27,12 @@ I2C_M_SETUP_Type k_setup =
 
 void init_keypad(void)
 {
-	k_send = 0x0F;
-	write_i2c(&k_setup);
+  if(!keypad_initialised)
+  {
+    k_send = 0x0F;
+    write_i2c(&k_setup);
+    keypad_initialised = 1;
+  }
 }
 
 uint8_t lookup(uint8_t column)
@@ -43,18 +49,21 @@ uint8_t lookup(uint8_t column)
 
 uint8_t check_column(uint8_t column)
 {
-	k_setup.rx_length = 0;
-	k_setup.tx_length = 1;	
-	k_send = ~(1 << (column + 3));
-	write_i2c(&k_setup);
-	k_setup.rx_length = 1;
-	k_setup.tx_length = 0;
-	write_i2c(&k_setup);
-	uint8_t result = 0;
-	uint8_t tmp = ~k_receive & 0x0F;
-	if(tmp != 0)
-		result = lookup(column);
-	return result;
+  if(!keypad_initialised)
+    init_keypad();
+
+  k_setup.rx_length = 0;
+  k_setup.tx_length = 1;
+  k_send = ~(1 << (column + 3));
+  write_i2c(&k_setup);
+  k_setup.rx_length = 1;
+  k_setup.tx_length = 0;
+  write_i2c(&k_setup);
+  uint8_t result = 0;
+  uint8_t tmp = ~k_receive & 0x0F;
+  if(tmp != 0)
+    result = lookup(column);
+  return result;
 }
 
 uint8_t check_keypad(void)

@@ -18,8 +18,6 @@ void main(void)
 	serial_init();
 	clear_serial();
 
-	init_keypad();
-
 	clear_lcd();
 
 	stage3();
