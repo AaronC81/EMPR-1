@@ -127,7 +127,6 @@ void stage3(void)
     {
       if(last != value)
       {
-	debug_to_serial("%02X\n\r" , value);
 	write_lcd_pos(value , row , pos);
 	pos = (pos + 1) & 0x0F;
 	if(!pos)
