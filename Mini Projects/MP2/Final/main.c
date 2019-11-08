@@ -93,7 +93,7 @@ void stage1(void)
     }
   }
 
-  debug_to_serial("%02X devices connected to i2c bus.\n\r" , count);
+  debug_to_serial("%d devices connected to i2c bus.\n\r" , count);
 }
 
 void stage2(void)
