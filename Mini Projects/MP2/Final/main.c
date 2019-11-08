@@ -14,7 +14,7 @@ void stage2(void);
 void stage3(void);
 
 void main(void)
-{	
+{
 	clear_serial();
 
 	clear_lcd();
