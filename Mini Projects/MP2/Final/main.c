@@ -21,6 +21,12 @@ void main(void)
 
 	stage1();
 
+	// wait one second
+
+	stage2();
+
+	// wait one second
+
 	stage3();
 
 	// shouldn't reach here !
@@ -63,7 +69,22 @@ void stage1(void)
   debug_to_serial("%02X devices connected to i2c bus.\n\r" , count);
 }
 
-void stage2(void){}
+void stage2(void)
+{
+  print_string("Hello" , ROW_1);
+
+  // wait one second
+
+  clear_lcd();
+
+  // wait one second
+
+  print_string("World" , ROW_2);
+
+  // wait one second
+
+  clear_lcd();
+}
 
 void stage3(void)
 {
