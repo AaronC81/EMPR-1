@@ -8,10 +8,33 @@
 #include "i2c.h"
 #include "lcd.h"
 #include "keypad.h"
+#include "lpc17xx_rtc.h"
+#include "rtc.h"
 
 void stage1(void);
 void stage2(void);
 void stage3(void);
+
+uint8_t delay = 0;
+
+void RTC_IRQHandler(void)
+{
+  if(RTC_GetIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE))
+    RTC_ClearIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE);
+  if(RTC_GetIntPending(LPC_RTC, RTC_INT_ALARM))
+    RTC_ClearIntPending(LPC_RTC, RTC_INT_ALARM);
+
+  delay = 0;
+}
+
+void sleeper(void)
+{
+  enable_rtc(1);
+  delay = 1;
+  while(delay)
+    ;
+  enable_rtc(0);
+}
 
 void main(void)
 {
@@ -19,13 +42,17 @@ void main(void)
 
 	clear_lcd();
 
+	init_rtc();
+
 	stage1();
 
 	// wait one second
+	sleeper();
 
 	stage2();
 
 	// wait one second
+	sleeper();
 
 	stage3();
 
@@ -74,14 +101,17 @@ void stage2(void)
   print_string("Hello" , ROW_1);
 
   // wait one second
+  sleeper();
 
   clear_lcd();
 
   // wait one second
+  sleeper();
 
   print_string("World" , ROW_2);
 
   // wait one second
+  sleeper();
 
   clear_lcd();
 }

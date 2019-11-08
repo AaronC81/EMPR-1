@@ -7,16 +7,6 @@
 #include "lpc17xx_rtc.h"
 #include "serial.h"
 
-void RTC_IRQHandler(void)
-{
-  if(RTC_GetIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE))
-    RTC_ClearIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE);
-  if (RTC_GetIntPending(LPC_RTC, RTC_INT_ALARM))
-    RTC_ClearIntPending(LPC_RTC, RTC_INT_ALARM);
-
-  debug_to_serial("tick\n\r");
-}
-
 void init_rtc(void)
 {
   RTC_Init(LPC_RTC);
