@@ -8,8 +8,11 @@
 #include "stdio.h"
 #include "stdarg.h"
 #include "string.h"
+#include "stdlib.h"
 
 uint8_t serial_initialised = 0;
+
+void serial_init(void);
 
 void debug_to_serial(const char* format , ...)
 {
