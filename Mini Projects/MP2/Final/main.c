@@ -29,11 +29,11 @@ void RTC_IRQHandler(void)
 
 void sleeper(void)
 {
-  enable_rtc(1);
+  enable_rtc(ENABLE);
   delay = 1;
   while(delay)
     ;
-  enable_rtc(0);
+  enable_rtc(DISABLE);
 }
 
 void main(void)

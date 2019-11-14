@@ -6,12 +6,13 @@
 
 #include "lpc17xx_rtc.h"
 #include "serial.h"
+#include "rtc.h"
 
 void init_rtc(void)
 {
   RTC_Init(LPC_RTC);
 
-  enable_rtc(0);
+  enable_rtc(DISABLE);
 
   NVIC_SetPriority(RTC_IRQn, ((0x01<<3)|0x01));
 
