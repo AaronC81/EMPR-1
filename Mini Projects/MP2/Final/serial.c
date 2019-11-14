@@ -41,7 +41,7 @@ void debug_to_serial(const char* format , ...)
 
 void clear_serial(void)
 {
-  debug_to_serial("\033[2J",6);
+  debug_to_serial("\033[2J");
 }
 
 // Read options
