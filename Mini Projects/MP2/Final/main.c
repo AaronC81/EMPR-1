@@ -119,6 +119,7 @@ void stage2(void)
 void stage3(void)
 {
   uint8_t value , last , pos , row;
+  last = 0x00;
   pos = 0;
   row = ROW_1;
   while(1)
