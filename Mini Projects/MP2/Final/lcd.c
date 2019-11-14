@@ -1,4 +1,4 @@
-/* character set R */
+/* character set R pg.23/86 */
 #include "lpc17xx_uart.h"		// Central include files
 #include "lpc17xx_pinsel.h"
 #include "lpc17xx_i2c.h"
@@ -79,13 +79,17 @@ void write_lcd_pos(uint8_t character , uint8_t row , uint8_t column)
 
   offset = row ? 0x40 : 0x00;
 
+  // select instruction register
   l_send[0] = 0x00;
+  // set position in DDRAM
   l_send[1] = 0x80 + column + offset;
   result = write_i2c(&l_setup);
   if(!result)
     debug_to_serial("Error setting LCD position.\n\r");
 
+  // select data register
   l_send[0] = 0x40;
+  // set the character in DDRAM
   l_send[1] = character;
   result = write_i2c(&l_setup);
   if(!result)
@@ -94,9 +98,10 @@ void write_lcd_pos(uint8_t character , uint8_t row , uint8_t column)
 
 uint8_t ascii_to_r( char letter )
 {
+  // UPPERCASE || lowercase
   if( (letter > 0x40 && letter < 0x5B) || (letter > 0x60 && letter < 0x7B) )
     return (uint8_t)(letter + 0x80);
-  else
+  else // SPACE
     return 0xA0;
 }
 
