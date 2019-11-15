@@ -3,34 +3,35 @@
 #include "lpc17xx_i2c.h"
 #include "lpc_types.h"
 #include "lpc17xx_dac.h"
-#include "lpc17xx_rtc.h"
+#include "LPC17xx.h"
 #include "serial.h"
-#include "rtc.h"
 
 #define DAC_MIN 0
 #define DAC_MAX 0x3FF
 
-void RTC_IRQHandler(void)
+volatile uint32_t ticks = 0;
+
+void SysTick_Handler(void)
 {
   static uint32_t dac_value;
-  if(RTC_GetIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE))
-    RTC_ClearIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE);
-  if(RTC_GetIntPending(LPC_RTC, RTC_INT_ALARM))
-    RTC_ClearIntPending(LPC_RTC, RTC_INT_ALARM);
 
-  dac_value = (dac_value == DAC_MIN) ? DAC_MAX : DAC_MIN;
-  DAC_UpdateValue(LPC_DAC , dac_value);
-  debug_to_serial("Writing 0x%X to DAC\n\r" , dac_value);
+  // 0x3FF = 1023 ~= 1000
+  if((ticks++ & 0x3FF) == 0)
+  {
+    dac_value = (dac_value == DAC_MIN) ? DAC_MAX : DAC_MIN;
+    DAC_UpdateValue(LPC_DAC , dac_value);
+    debug_to_serial("Writing 0x%X to DAC\n\r" , dac_value);
+  }
 }
 
 
 void main(void)
 {
+  uint32_t return_code;
+
   clear_serial();
 
   debug_to_serial("Hello DAC\n\r");
-
-  init_rtc();
 
   PINSEL_CFG_Type PinCfg;
   PinCfg.Funcnum = 2;
@@ -41,7 +42,11 @@ void main(void)
   PINSEL_ConfigPin(&PinCfg);
 
   DAC_Init(LPC_DAC);
-  enable_rtc(ENABLE);
-  
+
+  // milisecond granularlity
+  return_code = SysTick_Config(SystemCoreClock / 1000);
+  if(!return_code)
+    debug_to_serial("Error setting up SysTick interrupt.\n\r");
+
   while(1);
 }
