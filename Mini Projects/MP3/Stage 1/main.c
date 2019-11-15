@@ -35,7 +35,9 @@ void main(void)
     {
       ADC_StartCmd(LPC_ADC, ADC_START_NOW);
       AdcData &= 0xFFF;
-      debug_to_serial("%u\n\r" , AdcData);
+      if(AdcData != last)
+	debug_to_serial("%u\n\r" , AdcData);
+      last = AdcData;
     }
   }
 
