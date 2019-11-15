@@ -43,7 +43,7 @@ void main(void)
 
   // milisecond granularlity
   return_code = SysTick_Config(SystemCoreClock / 1000);
-  if(!return_code)
+  if(return_code != 0)
     debug_to_serial("Error setting up SysTick interrupt.\n\r");
 
   while(1);
