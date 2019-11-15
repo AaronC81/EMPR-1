@@ -15,8 +15,8 @@ void main(void)
 
   PINSEL_CFG_Type PinCfg;
   PinCfg.Funcnum = 1;
-  PinCfg.OpenDrain = 0;
-  PinCfg.Pinmode = 2;
+  PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
+  PinCfg.Pinmode = PINSEL_PINMODE_TRISTATE;
   PinCfg.Portnum = 0;
   PinCfg.Pinnum = 23;
   PINSEL_ConfigPin(&PinCfg);
