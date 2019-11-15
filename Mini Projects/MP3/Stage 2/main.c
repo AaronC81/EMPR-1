@@ -1,4 +1,4 @@
-#include "lpc17xx_uart.h"		// Central include files
+#include "lpc17xx_uart.h"
 #include "lpc17xx_pinsel.h"
 #include "lpc17xx_i2c.h"
 #include "lpc_types.h"
@@ -41,7 +41,7 @@ void main(void)
 
   DAC_Init(LPC_DAC);
 
-  // milisecond granularlity
+  // milisecond granularity - maximum rate for DAC
   return_code = SysTick_Config(SystemCoreClock / 1000);
   if(return_code != 0)
     debug_to_serial("Error setting up SysTick interrupt.\n\r");
