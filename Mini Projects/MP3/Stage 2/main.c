@@ -6,6 +6,8 @@
 #include "LPC17xx.h"
 #include "serial.h"
 
+#include "sine.h"
+
 #define DAC_MIN 0
 #define DAC_MAX 0x3FF
 
@@ -15,13 +17,9 @@ void SysTick_Handler(void)
 {
   static uint32_t dac_value;
 
-  // 0x3FF = 1023 ~= 1000
-  if((ticks++ & 0x3FF) == 0)
-  {
-    dac_value = (dac_value == DAC_MIN) ? DAC_MAX : DAC_MIN;
-    DAC_UpdateValue(LPC_DAC , dac_value);
-    debug_to_serial("Writing 0x%X to DAC\n\r" , dac_value);
-  }
+  ticks++;
+  dac_value = sin_table[ticks & 0x3FF];
+  DAC_UpdateValue(LPC_DAC , dac_value);
 }
 
 
