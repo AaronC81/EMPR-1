@@ -10,10 +10,9 @@
 #define DAC_MIN 0
 #define DAC_MAX 0x3FF
 
-uint32_t dac_value;
-
 void RTC_IRQHandler(void)
 {
+  static uint32_t dac_value;
   if(RTC_GetIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE))
     RTC_ClearIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE);
   if(RTC_GetIntPending(LPC_RTC, RTC_INT_ALARM))
