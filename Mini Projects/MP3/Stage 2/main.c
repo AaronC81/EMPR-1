@@ -17,7 +17,7 @@ void SysTick_Handler(void)
 {
   static uint32_t dac_value;
 
-  ticks++;
+  ticks += 1000;
   dac_value = sin_table[ticks & 0x3FF];
   DAC_UpdateValue(LPC_DAC , dac_value);
 }

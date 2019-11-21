@@ -4,7 +4,7 @@ from math import sin , pi
 
 amplitude = 1023 # 1023 is the maximum for the DAC
 samples = 2**10 # must be power of two, 1024 ~= 1 second
-hertz = 1000
+hertz = 1
 
 step = ((2 * pi) / samples) * hertz
 
