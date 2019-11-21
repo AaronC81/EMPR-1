@@ -36,7 +36,7 @@ void main(void)
   PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
   PinCfg.Pinmode = PINSEL_PINMODE_TRISTATE;
   PinCfg.Portnum = 0;
-  PinCfg.Pinnum = 26;
+  PinCfg.Pinnum = 26; // P18
   PINSEL_ConfigPin(&PinCfg);
 
   DAC_Init(LPC_DAC);
