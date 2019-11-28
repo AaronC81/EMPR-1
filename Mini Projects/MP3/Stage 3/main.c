@@ -8,52 +8,12 @@
 #include "LPC17xx.h"
 #include "serial.h"
 
-#include "sine.h"
-
 #define DAC_MIN 0
 #define DAC_MAX 0x3FF
 
-void update_sine(uint32_t freq , uint32_t amp);
-
-void SysTick_Handler(void)
-{
-  static uint32_t ticks = 0;
-  static uint32_t amp = 10;
-  static uint32_t freq = 10;
-
-  if((ticks % (5 * 1000) == 0))
-  {
-    amp = (amp + 1) % 10;
-    debug_to_serial("Amplitude : %u\n\r" , amp);
-  }
-
-  if((ticks % (50 * 1000) == 0))
-  {
-    freq = freq < 10000 ? freq * 10 : 10;
-    debug_to_serial("Frequency : %u Hz\n\r" , freq);
-  }
-
-  ticks++;
-  update_sine(freq , amp);
-}
-
-void update_sine(uint32_t freq , uint32_t amp)
-{
-  static uint32_t ticks = 0;
-  static uint32_t dac_value;
-
-  ticks += freq;
-  amp = amp > N_AMPLITUDES ? N_AMPLITUDES : amp;
-  dac_value = (amp != 0) ? sin_table[--amp][ticks & (N_SAMPLES - 1)] : 0;
-
-  DAC_UpdateValue(LPC_DAC , dac_value);
-}
-
-
 void main(void)
 {
-  uint32_t return_code;
-  uint32_t AdcData , last;
+  uint32_t AdcData , last , dac_value;
 
   clear_serial();
 
@@ -69,12 +29,6 @@ void main(void)
   PINSEL_ConfigPin(&PinCfg);
 
   DAC_Init(LPC_DAC);
-
-  // milisecond granularity - maximum rate for DAC
-  return_code = SysTick_Config(SystemCoreClock / 1000);
-  if(return_code != 0)
-    debug_to_serial("Error setting up SysTick interrupt.\n\r");
-
 
   // ADC
   debug_to_serial("Hello ADC\n\r");
@@ -102,7 +56,11 @@ void main(void)
       ADC_StartCmd(LPC_ADC, ADC_START_NOW);
       AdcData &= 0xFFF;
       if(AdcData != last)
-	debug_to_serial("%u\n\r" , AdcData);
+      {
+	//	debug_to_serial("%u\n\r" , AdcData);
+	dac_value = AdcData >> 2;
+	DAC_UpdateValue(LPC_DAC , dac_value);
+      }
       last = AdcData;
     }
   }
