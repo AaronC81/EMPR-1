@@ -2,6 +2,7 @@
 #include "serial.h"
 #include "lpc17xx_rtc.h"
 #include "rtc.h"
+#include "pwm.h"
 
 void RTC_IRQHandler(void)
 {
