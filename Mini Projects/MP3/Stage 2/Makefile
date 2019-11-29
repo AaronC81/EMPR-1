@@ -53,7 +53,7 @@ LDFLAGS+=-L$(CMSIS)/lib -lDriversLPC17xxgnu
 EXECNAME	= bin/$(BLOB)
 
 # Source files provided by the user to build the project
-OBJ		= $(BLOB).o serial.o lcd.o i2c.o keypad.o rtc.o dac.o
+OBJ		= $(BLOB).o serial.o dac.o
 
 # Commands handled by this makefile
 all: 	serial
