@@ -22,7 +22,7 @@ void SysTick_Handler(void)
 
   if((ticks % (50 * 1000) == 0))
   {
-    freq = freq < 1000 ? freq + 100 : 10;
+    freq = freq < 1000 ? freq + 100 : 100;
     debug_to_serial("Frequency : %u Hz\n\r" , freq);
   }
 
