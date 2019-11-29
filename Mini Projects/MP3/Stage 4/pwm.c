@@ -1,4 +1,8 @@
 
+/*
+ * Cargo cult'd from https://www-users.cs.york.ac.uk/~pcc/MCP/HAPR-Course-web/CMSIS/examples/html/pwm__single__edge_8c_source.html
+ */
+
 #include "lpc17xx_pinsel.h"
 #include "lpc17xx_pwm.h"
 #include "serial.h"
