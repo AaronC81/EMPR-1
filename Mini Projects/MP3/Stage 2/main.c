@@ -14,16 +14,16 @@ void SysTick_Handler(void)
   static uint32_t amp = 10;
   static uint32_t freq = 0;
 
+  if((ticks % (50 * 1000) == 0))
+  {
+    freq = freq < 500 ? freq + 100 : 100;
+    debug_to_serial("Frequency : %u Hz\n\r" , freq);
+  }
+
   if((ticks % (5 * 1000) == 0))
   {
     amp = (amp + 1) % 10;
     debug_to_serial("Amplitude : %u\n\r" , amp);
-  }
-
-  if((ticks % (50 * 1000) == 0))
-  {
-    freq = freq < 1000 ? freq + 100 : 100;
-    debug_to_serial("Frequency : %u Hz\n\r" , freq);
   }
 
   ticks++;
