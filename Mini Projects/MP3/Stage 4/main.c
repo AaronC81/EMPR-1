@@ -34,7 +34,6 @@ void main(void)
     match_value += 5;
   }
 
-  // milisecond granularity - 1kHz
   return_code = SysTick_Config(SystemCoreClock / 10);
   if(return_code != 0)
     debug_to_serial("Error setting up SysTick interrupt.\n\r");
