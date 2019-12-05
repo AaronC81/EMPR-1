@@ -10,6 +10,7 @@
 void update_sine(uint32_t freq , uint32_t amp);
 
 uint8_t stage = 0;
+uint8_t key , last_key;
 
 void stage3(void)
 {
@@ -29,12 +30,12 @@ void stage3(void)
       write_dac(dac_value);
     }
     last = AdcData;
-    /*
-    if(check_keypad() != 0)
+
+    if(((key = check_keypad()) != 0) && key != last_key)
       break;
-    */
+    else
+      last_key = key;
   }
-  stage++;
 }
 
 void stage4(void)
@@ -78,8 +79,10 @@ void SysTick_Handler(void)
     ticks++;
     update_sine(freq , amp);
 
-    if(check_keypad() !=0)
-      stage = 4;
+    if(((last_key = check_keypad()) != 0) && key != last_key)
+      stage = 3;
+    else
+      last_key = key;
   }
   else if(stage == 3)
   {
@@ -88,6 +91,7 @@ void SysTick_Handler(void)
     stage3();
     debug_to_serial("Enabled SYSTICK\n\r");
     SYSTICK_Cmd(ENABLE);
+    stage = 4;
   }
   else if(stage == 4)
   {
@@ -132,7 +136,7 @@ void main(void)
   debug_to_serial("Hello DAC\n\r");
   init_dac();
 
-  stage = 4;
+  stage = 2;
 
   // milisecond granularity - 1kHz
   return_code = SysTick_Config(SystemCoreClock / 1000);
