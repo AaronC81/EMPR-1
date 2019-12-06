@@ -12,12 +12,38 @@ void update_sine(uint32_t freq , uint32_t amp);
 uint8_t stage = 0;
 uint8_t key , last_key;
 
+void stage2(void)
+{
+  static uint32_t ticks = 0;
+  static uint32_t amp = 10;
+  static uint32_t freq = 0;
+
+  if((ticks % (50 * 1000) == 0))
+  {
+    freq = freq < 500 ? freq + 100 : 100;
+    debug_to_serial("Frequency : %u Hz\n\r" , freq);
+  }
+
+  if((ticks % (5 * 1000) == 0))
+  {
+    amp = (amp + 1) % 10;
+    debug_to_serial("Amplitude : %u\n\r" , amp);
+  }
+
+  ticks++;
+  update_sine(freq , amp);
+
+  if(((last_key = check_keypad()) != 0) && key != last_key)
+    stage = 3;
+  else
+    last_key = key;
+}
+
 void stage3(void)
 {
   uint32_t AdcData , last , dac_value;
 
   debug_to_serial("Hello ADC\n\r");
-  init_adc();
 
   last = 0;
   AdcData = 0;
@@ -43,7 +69,6 @@ void stage4(void)
   uint8_t tmp , match_value;
 
   debug_to_serial("Hello PWM\n\r");
-  init_pwm();
 
   match_value = 0;
   for(tmp = 1 ; tmp < 7 ; tmp++)
@@ -53,36 +78,46 @@ void stage4(void)
   }
 }
 
+void stage5(void)
+{
+  static uint8_t match_value = 0;
+  static uint8_t match_step = 1;
+  static uint8_t count = 0 ;
+  static uint32_t ticks = 0;
+  uint8_t tmp;
+
+  if((ticks++ % 100) == 0 && count < 5)
+  {
+    for(tmp = 1 ; tmp < 7 ; tmp++)
+    {
+      update_match(match_value , tmp);
+      match_value += match_step;
+      if(match_value == 0)
+      {
+	count++;
+	debug_to_serial("Count : %u\n\r" , count);
+      }
+    }
+  }
+  else if(count >= 5)
+  {
+    if(((last_key = check_keypad()) != 0) && key != last_key)
+    {
+      stage = 2;
+      count = 0;
+    }
+    else
+    {
+      last_key = key;
+    }
+  }
+}
+
 void SysTick_Handler(void)
 {
-  static uint32_t ticks = 0;
-  static uint32_t amp = 10;
-  static uint32_t freq = 0;
-  uint8_t tmp;
-  static uint8_t match_value = 200;
-  static uint8_t match_step = 1;
-
   if(stage == 2)
   {
-    if((ticks % (50 * 1000) == 0))
-    {
-      freq = freq < 500 ? freq + 100 : 100;
-      debug_to_serial("Frequency : %u Hz\n\r" , freq);
-    }
-
-    if((ticks % (5 * 1000) == 0))
-    {
-      amp = (amp + 1) % 10;
-      debug_to_serial("Amplitude : %u\n\r" , amp);
-    }
-
-    ticks++;
-    update_sine(freq , amp);
-
-    if(((last_key = check_keypad()) != 0) && key != last_key)
-      stage = 3;
-    else
-      last_key = key;
+    stage2();
   }
   else if(stage == 3)
   {
@@ -100,17 +135,7 @@ void SysTick_Handler(void)
   }
   else if(stage == 5)
   {
-    if((ticks++ % 100) == 0)
-    {
-      for(tmp = 1 ; tmp < 7 ; tmp++)
-      {
-	update_match(match_value , tmp);
-	match_value += match_step;
-	if(match_value == 240)
-	  match_value = 208;
-	debug_to_serial("Match value %u\n\r" , match_value);
-      }
-    }
+    stage5();
   }
 }
 
